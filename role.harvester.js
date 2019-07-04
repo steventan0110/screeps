@@ -8,8 +8,9 @@ module.exports = {
         }
         
         if (creep.memory.working == true) {
-            var structure = creep.pos.findClosestByPath(FIND_STRUCTURES,{
-                filter:(s)=> s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL //repairing walls might get into trouble
+            var structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES,{
+                filter:(s)=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) 
+                && s.energy < s.energyCapacity //only spawn and extension has energy capacity attribute
             });
             if (structure != undefined) {
                 if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
