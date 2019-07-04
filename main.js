@@ -2,7 +2,10 @@ require('prototype.spawn')()
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
-var roleRepairer = require('role.repairer')
+var roleRepairer = require('role.repairer');
+var roleLongDistanceHarvester = require('role.longDistanceHarvester');
+
+var HOME = 'W12N18';
 
 module.exports.loop = function() {
     //clear memory
@@ -26,18 +29,24 @@ module.exports.loop = function() {
         else if (creep.memory.role = 'repairer') {
             roleRepairer.run(creep);
         }
+        else if (creep.memory.role = 'longDistanceHarvester') {
+            roleLongDistanceHarvester.run(creep);
+        }
     }
     //auto spawning
     var minHarvester = 10;
     var minUpgrader = 1;
     var minBuilder = 1; 
     var minRepairer = 2;
+    var minLongDistanceHarvesterW12N17 = 1;
     var numOfHarvester = _.sum(Game.creeps, (c)=> c.memory.role == 'harvester'); 
     var numOfUpgrader = _.sum(Game.creeps, (c)=> c.memory.role == 'upgrader'); 
     var numOfBuilder = _.sum(Game.creeps, (c)=> c.memory.role == 'builder'); 
     var numOfRepairer = _.sum(Game.creeps, (c)=> c.memory.role == 'repairer');
+    var numOfLongDistanceHarvesterW12N17 = _.sum(Game.creeps, 
+        (c)=> c.memory.role == 'longDistanceHarvester' && c.memory.target == 'W12N17');
 
-    var numTotal = numOfHarvester + numOfUpgrader + numOfBuilder + numOfRepairer;
+    var numTotal = numOfHarvester + numOfUpgrader + numOfBuilder + numOfRepairer + numOfLongDistanceHarvester;
     var name = undefined;
     var energy = Game.spawns.Spawn1.room.energyCapacityAvailable;
     console.log(numTotal)
@@ -52,6 +61,9 @@ module.exports.loop = function() {
     }
     else if (numOfBuilder < minBuilder) {
         name = Game.spawns.Spawn1.createCustomCreep(energy, 'builder');
+    }
+    else if (numOfLongDistanceHarvesterW12N17 < minLongDistanceHarvesterW12N17) {
+        name = Game.spawns.Spawn1.createLongDistanceHarvester(energy, 3, HOME, 'W12N17',0);
     }
     
     else {
