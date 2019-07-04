@@ -8,12 +8,19 @@ module.exports = {
         }
         
         if (creep.memory.working == true) {
-            if (creep.transfer(Game.spawns.steven, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(Game.spawns.steven);
+            var structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES,{
+                filter:(s)=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) 
+                && s.energy < s.energyCapacity //only spawn and extension has energy capacity attribute
+            });
+            if (structure != undefined) {
+                if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(structure);
+                }
             }
+            
         }
         else {
-            var source = creep.pos.findClosestByPath(FIND_SOURCES);
+            var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
             if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
             }
