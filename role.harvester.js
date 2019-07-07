@@ -9,12 +9,23 @@ module.exports = {
         
         if (creep.memory.working == true) {
             var structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES,{
-                filter:(s)=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION || s.structureType == STRUCTURE_TOWER) 
+                filter:(s)=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION 
+                    || s.structureType == STRUCTURE_TOWER) 
                 && s.energy < s.energyCapacity //only spawn and extension has energy capacity attribute
             });
             if (structure != undefined) {
                 if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(structure);
+                }
+            }
+            else {
+                //store the excessive energy into container with energy
+                structure =  creep.pos.findClosestByPath(FIND_MY_STRUCTURES,{
+                    filter: (s)=> s.structureType == STRUCTURE_CONTAINER && _.sum(s.store) < s.storeCapacity});
+                if (structure != undefined) {
+                    if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(structure);
+                    }
                 }
             }
             

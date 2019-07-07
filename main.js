@@ -8,36 +8,12 @@ var roleLongDistanceHarvester = require('role.longDistanceHarvester');
 var HOME = 'W12N18';
 
 module.exports.loop = function() {
-    //clear memory
-    for (let name in Memory.creeps) {
-        if (Game.creeps[name] == undefined) {
-            delete Memory.creeps[name];
-        }
-    }
-    for (let name in Game.creeps) {
-        var creep = Game.creeps[name];
-        //console.log(name +" is working: "+ creep.memory.working);
-        if (creep.memory.role == 'harvester') {
-            roleHarvester.run(creep);
-            
-        }
-        else if (creep.memory.role == 'upgrader') {
-            roleUpgrader.run(creep);
-        }
-        else if (creep.memory.role = 'builder') {
-            roleBuilder.run(creep);
-        }
-        else if (creep.memory.role = 'repairer') {
-            roleRepairer.run(creep);
-        }
-        else if (creep.memory.role = 'longDistanceHarvester') {
-            roleLongDistanceHarvester.run(creep);
-        }
-    }
     //detect enemies and attack them
     var hostiles = Game.rooms.W12N18.find(FIND_HOSTILE_CREEPS);
+    towers = Game.rooms.W12N18.find(FIND_MY_STRUCTURES, {
+            filter: (s)=> s.structureType == STRUCTURE_TOWER
+        });
     if (hostiles.length > 0) {
-        var towers = Game.rooms.W12N18.find(FIND_MY_STRUCTURES, {filter: {structureType : STRUCTURE_TOWER}});
         for (let tower of towers) {
             var target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
             if (target != undefined) {
@@ -45,12 +21,53 @@ module.exports.loop = function() {
             }
         }
     }
+    //heal my creeps:
+    
+    for (let tower of towers) {
+        var target = tower.pos.findClosestByRange(FIND_MY_CREEPS, {
+            filter: (c) => c.hits < c.hitsMax 
+        });
+        if (target != undefined) {
+            tower.heal(target);
+        }
+    }
+    //clear memory
+    for (let name in Memory.creeps) {
+        var cp = Game.creeps[name];
+        if (cp == undefined) {
+            delete Memory.creeps[name];
+        }
+    }
+    for (let name in Game.creeps) {
+        var creep = Game.creeps[name];
+        //console.log(name +" is working: "+ creep.memory.working);
+   
+        if (creep.memory.role == 'harvester') {
+            roleHarvester.run(creep);
+            
+        }
+        else if (creep.memory.role == 'upgrader') {
+            roleUpgrader.run(creep);
+        }
+        else if (creep.memory.role == 'builder') {
+            roleBuilder.run(creep);
+        }
+        else if (creep.memory.role == 'repairer') {
+            roleRepairer.run(creep);
+        }
+        else if (creep.memory.role == 'longDistanceHarvester') {
+            roleLongDistanceHarvester.run(creep);
+        }
+    }
+    
+    
+    
     //auto spawning
     var minHarvester = 10;
     var minUpgrader = 3;
     var minBuilder = 1; 
     var minRepairer = 2;
-    var minLongDistanceHarvester = 1;
+    var minLongDistanceHarvester = 3;
     var numOfHarvester = _.sum(Game.creeps, (c)=> c.memory.role == 'harvester'); 
     var numOfUpgrader = _.sum(Game.creeps, (c)=> c.memory.role == 'upgrader'); 
     var numOfBuilder = _.sum(Game.creeps, (c)=> c.memory.role == 'builder'); 
@@ -67,7 +84,7 @@ module.exports.loop = function() {
     if (numOfHarvester < minHarvester) {
         name = Game.spawns.Spawn1.createCustomCreep(energy, 'harvester');
         //in case all creeps are destroyed by invaders:
-            if (name == ERR_NOT_ENOUGH_ENERGY && numOfHarvester == 0) {
+            if (numOfHarvester == 0) {
                 
                 name = Game.spawns.Spawn1.createCustomCreep(Game.spawns.Spawn1.room.energyAvailable, 'harvester');
             }
@@ -87,7 +104,6 @@ module.exports.loop = function() {
     }
     
     else {
-        console.log("reach here");
         name = Game.spawns.Spawn1.createCustomCreep(energy, 'builder');
         
     }
@@ -98,5 +114,4 @@ module.exports.loop = function() {
     }
 
     
-
 }

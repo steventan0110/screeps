@@ -1,4 +1,3 @@
-
 module.exports = function() {
     StructureSpawn.prototype.createCustomCreep = 
         function(energy, roleName) {
@@ -39,4 +38,5 @@ module.exports = function() {
                 sourceId: sourceId,
                 working: false});
         };
+    
 };

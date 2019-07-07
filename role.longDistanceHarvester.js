@@ -8,10 +8,11 @@ module.exports = {
         }
         
         if (creep.memory.working == true) {
-
+            //already carry energy on body
             if (creep.room.name == creep.memory.home) {
                 var structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES,{
-                    filter:(s)=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) 
+                    filter:(s)=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION
+                        || s.structureType == STRUCTURE_TOWER) 
                     && s.energy < s.energyCapacity //only spawn and extension has energy capacity attribute
                 });
                 if (structure != undefined) {
@@ -29,12 +30,16 @@ module.exports = {
             
         }
         else {
+            //on the way to another room
             if (creep.room.name == creep.memory.target) {
-                var source = creep.room.find(FIND_SOURCES)[creep.memory.sourceId];
-               
+                var source = creep.pos.findClosestByPath(FIND_SOURCES);
                 if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(source);
+                    creep.moveTo(source, {reusePath: 3});
                 }
+            }
+            else {
+                var exit = creep.room.findExitTo(creep.memory.target);
+                creep.moveTo(creep.pos.findClosestByRange(exit)); 
             }
             
         }
