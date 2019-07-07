@@ -1,3 +1,4 @@
+
 var roleUpgrader = require('role.upgrader');
 
 module.exports = {
@@ -29,4 +30,5 @@ module.exports = {
             }
         }
     }
+
 }
