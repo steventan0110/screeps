@@ -77,7 +77,7 @@ module.exports.loop = function() {
     //auto spawning
     var spawn = Game.spawns.Spawn1;
     var sources = spawn.room.find(FIND_SOURCES);
-    var minHarvester = 10;
+    var minHarvester = 6;
     var minUpgrader = 2;
     var minBuilder = 3; 
     var minRepairer = 3;
@@ -91,7 +91,7 @@ module.exports.loop = function() {
     var numOfMover = _.sum(Game.creeps, (c)=> c.memory.role == 'mover');
     var numOfLongDistanceHarvesterW12N17 = _.sum(Game.creeps, 
         (c)=> c.memory.role == 'longDistanceHarvester' && c.memory.target == 'W12N17');
-    console.log("num of builder"+ minBuilder);
+    
     var numTotal = numOfHarvester + numOfUpgrader + numOfBuilder + numOfRepairer + numOfLongDistanceHarvesterW12N17;
     var name = undefined;
     var energy = Game.spawns.Spawn1.room.energyCapacityAvailable;
@@ -99,36 +99,41 @@ module.exports.loop = function() {
     numOfRepairer +"LDharvester: "+ numOfLongDistanceHarvesterW12N17 + "miner: " +numOfMiner + "mover: "+ numOfMover);
 
 
-    if (numOfHarvester == 0 && (numOfMiner == 0 || numOfMover == 0)) {
-        if (numOfMiner > 0) {
-            spawn.createMover(spawn.room.energyAvailable);
-        }
-        else {
-            name = spawn.createCustomCreep(spawn.room.energyAvailable, 'harvester');
-        }
-    } else {
-        name = undefined;
+    // if (numOfHarvester == 0 && (numOfMiner == 0 || numOfMover == 0)) {
+    //     if (numOfMiner > 0) {
+    //         spawn.createMover(spawn.room.energyAvailable);
+    //     }
+    //     else {
+    //         name = spawn.createCustomCreep(spawn.room.energyAvailable, 'harvester');
+    //     }
+    // } else {
+    //     name = undefined;
 
-        // for (let source of sources) {
-        //     //check if it has miner already
-        //     if (!_.some(Game.creeps, c => c.memory.role == 'miner' && c.memory.sourceId == source.id)) {
-        //         //check if container exists
-        //         let container = source.pos.findInRange(FIND_STRUCTURES, 1, {
-        //             filter: (s) => s.structureType == STRUCTURE_CONTAINER
-        //         });
-        //         if (container.length > 0) {
-        //             name = spawn.createMiner(source.id);
+    //     // for (let source of sources) {
+    //     //     //check if it has miner already
+    //     //     if (!_.some(Game.creeps, c => c.memory.role == 'miner' && c.memory.sourceId == source.id)) {
+    //     //         //check if container exists
+    //     //         let container = source.pos.findInRange(FIND_STRUCTURES, 1, {
+    //     //             filter: (s) => s.structureType == STRUCTURE_CONTAINER
+    //     //         });
+    //     //         if (container.length > 0) {
+    //     //             name = spawn.createMiner(source.id);
                 
-        //         }
-        //     }
-        // }
-    }
+    //     //         }
+    //     //     }
+    //     // }
+    // }
+
     if (name == undefined) {
         // if (numOfMover < minMover) {
         //     name = spawn.createMover(300, 'mover');
         // }
         if (numOfHarvester < minHarvester) {
-            name = Game.spawns.Spawn1.createCustomCreep(energy, 'harvester');
+            if (numOfHarvester <= 1) {
+                name = Game.spawns.Spawn1.createCustomCreep(spawn.room.energyAvailable, 'harvester');
+            } else {
+                name = Game.spawns.Spawn1.createCustomCreep(energy, 'harvester');
+            }
         }
         else if (numOfUpgrader < minUpgrader) {
             name = Game.spawns.Spawn1.createCustomCreep(energy, 'upgrader');

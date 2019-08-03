@@ -33,15 +33,15 @@ module.exports = {
             
         }
         else {
-            //if not working, check if there's available source in the room
-            var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
-            });
-            // if (container != undefined) {
-            //     if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            //         creep.moveTo(container);
-            //     }
-            // }
+            // //if not working, check if there's available source in the room
+            // var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            //     filter: s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
+            // });
+            // // if (container != undefined) {
+            // //     if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            // //         creep.moveTo(container);
+            // //     }
+            // // }
           
                 var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
                 // if (source == undefined) {
